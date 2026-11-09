@@ -1,0 +1,23 @@
+name: NEMESIS Anna hangteszt
+on:
+  workflow_dispatch:
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Piper telepitese
+        run: pip install piper-tts numpy
+      - name: Anna modell letoltese
+        run: |
+          curl -fL --retry 3 -o hu_HU-anna-medium.onnx 'https://huggingface.co/rhasspy/piper-voices/resolve/main/hu/hu_HU/anna/medium/hu_HU-anna-medium.onnx'
+          curl -fL --retry 3 -o hu_HU-anna-medium.onnx.json 'https://huggingface.co/rhasspy/piper-voices/resolve/main/hu/hu_HU/anna/medium/hu_HU-anna-medium.onnx.json'
+      - name: Magyar hang es futurisztikus valtozat
+        run: python generate.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NEMESIS_Anna_Hangteszt
+          path: output/*.wav
